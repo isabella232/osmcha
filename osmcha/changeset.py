@@ -201,6 +201,7 @@ class Analyse(object):
         self.calc_user_score()
         self.calc_changeset_score()
         self.verify_words()
+        self.autovandal()
 
     def set_user_score(self, score, reason):
         self.user_score = self.user_score + score
@@ -294,15 +295,13 @@ class Analyse(object):
             return joblib.load('models/autovandal.pkl')
 
         def changeset_to_data(changeset):
-            features = ["editor", "source", "create", "modify", "delete"]
-            data = []
-            for feature in features:
-                # Convert a string to a numberical value using it's length
-                if isinstance(changeset[feature], str):
-                    data.append(len(changeset[feature]))
-                else:
-                    data.append(changeset[feature])
-            return data
+            return [
+                len(changeset.editor),
+                len(changeset.source),
+                changeset.create,
+                changeset.modify,
+                changeset.delete
+            ]
 
         def predict(model, data):
             prediction = model.predict(data)
@@ -311,6 +310,7 @@ class Analyse(object):
         model = load_model()
         data = changeset_to_data(self)
         prediction = predict(model, data)
+        print('autovandal prediction: {}'.format(prediction))
 
         # -1 for problematic, +1 for not problematic
         if prediction == -1:

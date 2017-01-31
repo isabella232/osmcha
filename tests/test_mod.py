@@ -343,3 +343,8 @@ def test_analyse_user_details():
     assert ch.user_details['changesets_f_tstamp'] == datetime(2015, 05, 25, 16, 30, 43)
     assert ch.user_details['changesets_l_tstamp'] == datetime(2015, 05, 25, 16, 30, 43)
     assert ch.user_details['changesets_mapping_days'] == '2015=1'
+
+def test_autovandal():
+    changeset = Analyse(31450443)
+    changeset.full_analysis()
+    assert 'Flagged by ML classifier' in changeset.suspicion_reasons
