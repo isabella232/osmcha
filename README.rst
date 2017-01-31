@@ -152,6 +152,21 @@ Contributors
 * Sanjay Banghar
 * Bhargav Kowshik
 
+=======
+Testing
+-------
+
+```sh
+# Setup a virtual environment to install required packages.
+mkvirtualenv osmcha
+
+# Install required packages in locally editable (``-e``) mode.
+pip install -e .[test]
+
+# Run the tests.
+py.test
+```
+
 License
 =======
 
