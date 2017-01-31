@@ -35,6 +35,9 @@ setup(name='osmcha',
           'shapely',
           'python-dateutil',
           'PyYAML'
+          'numpy',
+          'scipy',
+          'scikit-learn'
       ],
       extras_require={
           'test': ['pytest'],
