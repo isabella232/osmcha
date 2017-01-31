@@ -508,3 +508,8 @@ def test_get_dict():
     assert 'modify' in ch.get_dict().keys()
     assert 'delete' in ch.get_dict().keys()
     assert len(ch.get_dict().keys()) == 15
+
+def test_autovandal():
+    changeset = Analyse(31450443)
+    changeset.full_analysis()
+    assert 'Flagged by ML classifier' in changeset.suspicion_reasons
