@@ -26,6 +26,9 @@ setup(name='osmcha',
           'homura',
           'shapely',
           'python-dateutil',
+          'numpy',
+          'scipy',
+          'scikit-learn'
       ],
       extras_require={
           'test': ['pytest'],
