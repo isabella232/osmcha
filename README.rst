@@ -160,6 +160,20 @@ Changelog
 =========
 
 Check `CHANGELOG.RST<CHANGELOG.RST>`_ for the version history.
+=======
+Testing
+-------
+
+```sh
+# Setup a virtual environment to install required packages.
+mkvirtualenv osmcha
+
+# Install required packages in locally editable (``-e``) mode.
+pip install -e .[test]
+
+# Run the tests.
+py.test
+```
 
 License
 =======
