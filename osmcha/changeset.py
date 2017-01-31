@@ -1,6 +1,7 @@
 import requests
 from homura import download
 from shapely.geometry import Polygon
+from sklearn.externals import joblib
 
 from os.path import basename, join, isfile
 from datetime import datetime
@@ -284,6 +285,36 @@ class Analyse(object):
             if w in editor_lower:
                 is_whitelisted = True
         return is_whitelisted
+
+    def autovandal(self):
+
+        reason = 'Flagged by ML classifier'
+
+        def load_model():
+            return joblib.load('models/autovandal.pkl')
+
+        def changeset_to_data(changeset):
+            features = ["editor", "source", "create", "modify", "delete"]
+            data = []
+            for feature in features:
+                # Convert a string to a numberical value using it's length
+                if isinstance(changeset[feature], str):
+                    data.append(len(changeset[feature]))
+                else:
+                    data.append(changeset[feature])
+            return data
+
+        def predict(model, data):
+            prediction = model.predict(data)
+            return prediction[0]
+
+        model = load_model()
+        data = changeset_to_data(self)
+        prediction = predict(model, data)
+
+        # -1 for problematic, +1 for not problematic
+        if prediction == -1:
+            self.suspicion_reasons.append(reason)
 
 
     def verify_words(self):
