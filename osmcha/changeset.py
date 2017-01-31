@@ -219,6 +219,7 @@ class Analyse(object):
         """Execute the count and verify_words methods."""
         self.count()
         self.verify_words()
+<<<<<<< HEAD
         self.changeset_by_new_mapper()
 
     def changeset_by_new_mapper(self):
@@ -252,6 +253,7 @@ class Analyse(object):
             print(
                 'changeset_by_new_mapper failed for: {}, {}'.format(self.id, str(e))
                 )
+        self.autovandal()
 
 
     def autovandal(self):
@@ -262,15 +264,13 @@ class Analyse(object):
             return joblib.load('models/autovandal.pkl')
 
         def changeset_to_data(changeset):
-            features = ["editor", "source", "create", "modify", "delete"]
-            data = []
-            for feature in features:
-                # Convert a string to a numberical value using it's length
-                if isinstance(changeset[feature], str):
-                    data.append(len(changeset[feature]))
-                else:
-                    data.append(changeset[feature])
-            return data
+            return [
+                len(changeset.editor),
+                len(changeset.source),
+                changeset.create,
+                changeset.modify,
+                changeset.delete
+            ]
 
         def predict(model, data):
             prediction = model.predict(data)
@@ -279,13 +279,12 @@ class Analyse(object):
         model = load_model()
         data = changeset_to_data(self)
         prediction = predict(model, data)
+        print('autovandal prediction: {}'.format(prediction))
 
         # -1 for problematic, +1 for not problematic
         if prediction == -1:
             self.suspicion_reasons.append(reason)
 
-
->>>>>>> Load trained model, transform data and get prediction
     def verify_words(self):
         """Verify the fields source, imagery_used and comment of the changeset
         for some suspect words.

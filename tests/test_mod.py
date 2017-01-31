@@ -512,6 +512,7 @@ def test_get_dict():
     assert 'delete' in ch.get_dict().keys()
     assert len(ch.get_dict().keys()) == 15
 
+<<<<<<< HEAD
 
 def test_changeset_without_tags():
     ch = Analyse(46755934)
@@ -572,3 +573,8 @@ def test_changeset_by_mapper_who_does_not_exist():
     changeset.full_analysis()
     assert 'New mapper' in changeset.suspicion_reasons
     assert changeset.is_suspect
+
+def test_autovandal():
+    changeset = Analyse(31450443)
+    changeset.full_analysis()
+    assert 'Flagged by ML classifier' in changeset.suspicion_reasons
