@@ -1,17 +1,9 @@
 ======
 osmcha
-<<<<<<< 8faea3d335dc519ec10b8ffb1eaa669f2db3871e
-======
-
-OSM Changeset Analyser, a Python package to detect suspicious OSM changesets
-
-=======
-=======
 
 OSM Changeset Analyser, ``osmcha``, is a Python package to detect suspicious OSM changesets.
 It was designed to be used with `osmcha-django <https://github.com/willemarcel/osmcha-django>`_,
 but also can be used standalone or in other projects.
->>>>>>> add detection rules information
 
 .. image:: https://badge.fury.io/py/osmcha.svg
     :target: http://badge.fury.io/py/osmcha
@@ -22,13 +14,6 @@ but also can be used standalone or in other projects.
 .. image:: https://coveralls.io/repos/willemarcel/osmcha/badge.svg
     :target: https://coveralls.io/r/willemarcel/osmcha
 
-<<<<<<< 8faea3d335dc519ec10b8ffb1eaa669f2db3871e
-
-Testing
-=======
-
-.. code-block:: bash
-=======
 Installation
 ============
 
@@ -145,7 +130,25 @@ and `ImproveOSM<http://improveosm.org>`_.
 
 Tests
 ======
->>>>>>> add detection rules information
+
+To run the tests on `osmcha`:
+
+.. code-block:: console
+
+  git clone https://github.com/willemarcel/osmcha.git
+  cd osmcha
+  pip install -e .[test]
+  py.test -v
+
+Changelog
+=========
+
+Check `CHANGELOG.RST<CHANGELOG.RST>`_ for the version history.
+
+Testing
+=======
+
+.. code-block:: bash
 
     # Setup a virtual environment to install required packages.
     mkvirtualenv osmcha
@@ -156,24 +159,6 @@ Tests
     # Run the tests.
     py.test
 
-Changelog
-=========
-
-Check `CHANGELOG.RST<CHANGELOG.RST>`_ for the version history.
-=======
-Testing
--------
-
-```sh
-# Setup a virtual environment to install required packages.
-mkvirtualenv osmcha
-
-# Install required packages in locally editable (``-e``) mode.
-pip install -e .[test]
-
-# Run the tests.
-py.test
-```
 
 License
 =======
