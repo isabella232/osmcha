@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from pytest import raises
 from shapely.geometry import Polygon
 
@@ -5,11 +7,27 @@ from datetime import datetime
 
 from osmcha.changeset import ChangesetList
 from osmcha.changeset import Analyse
+from osmcha.changeset import WORDS
+from osmcha.changeset import find_words
 from osmcha.changeset import InvalidChangesetError
-from osmcha.changeset import get_user_details
+
+
+def test_find_words():
+    """Test the changeset.find_words function and the regular expressions."""
+    suspect_words = WORDS['sources'] + WORDS['common']
+    excluded_words = WORDS['exclude']
+
+    assert find_words('import buildings', suspect_words)
+    assert find_words('imported Importação unimportant', suspect_words, excluded_words)
+    assert not find_words('important edit', suspect_words, excluded_words)
+    assert not find_words('Where is here?', suspect_words, excluded_words)
+    assert find_words('GooGle is not important', suspect_words, excluded_words)
+    assert not find_words('somewhere in the world', suspect_words, excluded_words)
+    assert find_words('дані по імпорту', suspect_words, excluded_words)
 
 
 def test_changeset_list():
+    """Test ChangesetList class."""
     c = ChangesetList('tests/245.osm.gz')
     assert len(c.changesets) == 25
     assert c.changesets[0]['id'] == '31982803'
@@ -21,10 +39,11 @@ def test_changeset_list():
         (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
         (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
         (-71.0646843, 44.2371354)
-    ])
+        ])
 
 
 def test_changeset_list_with_filters():
+    """Test ChangesetList class filter method."""
     c = ChangesetList('tests/245.osm.gz', 'tests/map.geojson')
     assert len(c.changesets) == 1
     assert c.changesets[0]['id'] == '31982803'
@@ -49,8 +68,8 @@ def test_analyse_init():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     assert ch.id == 1
     assert ch.editor == 'Potlatch 2'
@@ -61,6 +80,7 @@ def test_analyse_init():
 
 
 def test_changeset_without_coords():
+    """Changeset deleted a relation, so it has not a bbox."""
     ch = Analyse(33624206)
     assert ch.bbox == 'GEOMETRYCOLLECTION EMPTY'
 
@@ -79,8 +99,8 @@ def test_analyse_verify_words():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_words()
     assert ch.is_suspect
@@ -99,8 +119,8 @@ def test_analyse_verify_words():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_words()
     assert ch.is_suspect
@@ -120,8 +140,8 @@ def test_analyse_verify_words():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_words()
     assert ch.is_suspect
@@ -132,7 +152,7 @@ def test_analyse_verify_words():
         'created_at': '2015-04-25T18:08:46Z',
         'build': '2.3-650-gad99430',
         'version': '2.3',
-        'source': 'Data from Here',
+        'comment': 'Somewhere in Brazil',
         'id': '1',
         'user': 'JustTest',
         'uid': '123123',
@@ -140,34 +160,15 @@ def test_analyse_verify_words():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
-    ch = Analyse(ch_dict)
-    ch.verify_words()
-    assert ch.is_suspect
-    assert 'suspect_word' in ch.suspicion_reasons
-
-    ch_dict = {
-        'created_by': 'Potlatch 2',
-        'created_at': '2015-04-25T18:08:46Z',
-        'build': '2.3-650-gad99430',
-        'version': '2.3',
-        'source': 'Somewhere in Brazil',
-        'id': '1',
-        'user': 'JustTest',
-        'uid': '123123',
-        'bbox': Polygon([
-            (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
-            (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
-            (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_words()
     assert not ch.is_suspect
 
 
-def test_analyse_verify_editor():
+def test_analyse_verify_editor_josm():
+    """Test if JOSM is a powerfull_editor."""
     ch_dict = {
         'created_by': 'JOSM/1.5 (8339 en)',
         'created_at': '2015-04-25T18:08:46Z',
@@ -179,12 +180,15 @@ def test_analyse_verify_editor():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_editor()
     assert ch.powerfull_editor
 
+
+def test_analyse_verify_editor_merkaartor():
+    """Test if Merkaartor is a powerfull_editor."""
     ch_dict = {
         'created_by': 'Merkaartor 0.18 (de)',
         'created_at': '2015-04-25T18:08:46Z',
@@ -196,12 +200,15 @@ def test_analyse_verify_editor():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_editor()
     assert ch.powerfull_editor
 
+
+def test_analyse_verify_editor_level0():
+    """Test if Level0 is a powerfull_editor."""
     ch_dict = {
         'created_by': 'Level0 v1.1',
         'created_at': '2015-04-25T18:08:46Z',
@@ -213,12 +220,15 @@ def test_analyse_verify_editor():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_editor()
     assert ch.powerfull_editor
 
+
+def test_analyse_verify_editor_qgis():
+    """Test if QGIS is a powerfull_editor."""
     ch_dict = {
         'created_by': 'QGIS plugin',
         'created_at': '2015-04-25T18:08:46Z',
@@ -230,14 +240,20 @@ def test_analyse_verify_editor():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_editor()
     assert ch.powerfull_editor
 
+
+def test_analyse_verify_editor_id_osm():
+    """Test if iD is not a powerfull_editor and if https://www.openstreetmap.org/id
+    is a trusted instance.
+    """
     ch_dict = {
         'created_by': 'iD 1.7.3',
+        'host': 'https://www.openstreetmap.org/id',
         'created_at': '2015-04-25T18:08:46Z',
         'comment': 'add pois',
         'id': '1',
@@ -247,12 +263,89 @@ def test_analyse_verify_editor():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_editor()
     assert ch.powerfull_editor is False
+    assert ch.suspicion_reasons == []
 
+
+def test_analyse_verify_editor_id_improveosm():
+    """Test if iD is not a powerfull_editor and if http://improveosm.org
+    is a trusted instance.
+    """
+    ch_dict = {
+        'created_by': 'iD 1.7.3',
+        'host': 'http://improveosm.org/',
+        'created_at': '2015-04-25T18:08:46Z',
+        'comment': 'add pois',
+        'id': '1',
+        'user': 'JustTest',
+        'uid': '123123',
+        'bbox': Polygon([
+            (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
+            (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
+            (-71.0646843, 44.2371354)
+            ])
+        }
+    ch = Analyse(ch_dict)
+    ch.verify_editor()
+    assert ch.powerfull_editor is False
+    assert ch.suspicion_reasons == []
+
+
+def test_analyse_verify_editor_id_improveosm():
+    """Test if iD is not a powerfull_editor and if https://strava.github.io/iD/
+    is a trusted instance.
+    """
+    ch_dict = {
+        'created_by': 'iD 1.7.3',
+        'host': 'https://strava.github.io/iD/',
+        'created_at': '2015-04-25T18:08:46Z',
+        'comment': 'add pois',
+        'id': '1',
+        'user': 'JustTest',
+        'uid': '123123',
+        'bbox': Polygon([
+            (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
+            (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
+            (-71.0646843, 44.2371354)
+            ])
+        }
+    ch = Analyse(ch_dict)
+    ch.verify_editor()
+    assert ch.powerfull_editor is False
+    assert ch.suspicion_reasons == []
+
+
+def test_analyse_verify_editor_id_unknown_instance():
+    """Test if iD is not a powerfull_editor and if 'Unknown iD instance' is added
+    to suspicion_reasons.
+    """
+    ch_dict = {
+        'created_by': 'iD 1.7.3',
+        'host': 'http://anotherhost.com',
+        'created_at': '2015-04-25T18:08:46Z',
+        'comment': 'add pois',
+        'id': '1',
+        'user': 'JustTest',
+        'uid': '123123',
+        'bbox': Polygon([
+            (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
+            (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
+            (-71.0646843, 44.2371354)
+            ])
+        }
+    ch = Analyse(ch_dict)
+    ch.verify_editor()
+    assert ch.powerfull_editor is False
+    assert 'Unknown iD instance' in ch.suspicion_reasons
+    assert ch.is_suspect
+
+
+def test_analyse_verify_editor_Potlatch2():
+    """Test if Potlatch 2 is not a powerfull_editor."""
     ch_dict = {
         'created_by': 'Potlatch 2',
         'created_at': '2015-04-25T18:08:46Z',
@@ -264,8 +357,8 @@ def test_analyse_verify_editor():
             (-71.0646843, 44.2371354), (-71.0048652, 44.2371354),
             (-71.0048652, 44.2430624), (-71.0646843, 44.2430624),
             (-71.0646843, 44.2371354)
-        ])
-    }
+            ])
+        }
     ch = Analyse(ch_dict)
     ch.verify_editor()
     assert ch.powerfull_editor is False
@@ -282,67 +375,139 @@ def test_analyse_count():
 
 
 def test_analyse_import():
+    """Created: 1900. Modified: 16. Deleted: 320 / JOSM"""
     ch = Analyse(10013029)
     ch.full_analysis()
     assert ch.is_suspect
     assert 'possible import' in ch.suspicion_reasons
 
 
+def test_custom_create_value():
+    """Created: 1900. Modified: 16. Deleted: 320 / JOSM"""
+    ch = Analyse(10013029, create_threshold=2000)
+    ch.full_analysis()
+    assert ch.is_suspect is False
+    assert len(ch.suspicion_reasons) == 0
+
+
 def test_analyse_mass_modification():
+    """Created: 322. Modified: 1115. Deleted: 140 / Potlatch 2"""
     ch = Analyse(19863853)
     ch.full_analysis()
     assert ch.is_suspect
     assert 'mass modification' in ch.suspicion_reasons
 
 
+def test_custom_modify_value():
+    """Created: 322. Modified: 1115. Deleted: 140 / Potlatch 2"""
+    ch = Analyse(19863853, modify_threshold=1200)
+    ch.full_analysis()
+    assert ch.is_suspect is False
+    assert len(ch.suspicion_reasons) == 0
+
+
 def test_analyse_mass_deletion():
+    """Created: 0. Modified: 0. Deleted: 1019 / Potlatch 2"""
     ch = Analyse(31450443)
     ch.full_analysis()
     assert ch.is_suspect
     assert 'mass deletion' in ch.suspicion_reasons
 
 
-def test_get_user_details():
-    user = 'GarrettB'
-    user_details = get_user_details(user)
-    assert user in user_details['name']
-    assert user_details['blocks'] == 0
-
-
-def test_get_user_details_for_non_existing_user():
-    user = 'Non Existing User'
-    user_details = get_user_details(user)
-    assert user_details == dict()
-
-
-def test_analyse_user_details():
-    ch = Analyse(31450443)
+def test_custom_delete_value():
+    """C/M/D = 0 0 61 / iD"""
+    ch = Analyse(45901540, delete_threshold=100)
     ch.full_analysis()
-    assert ch.user_details
+    assert ch.is_suspect is False
+    assert len(ch.suspicion_reasons) == 0
 
-    assert ch.user_details['contributor_uid'] == 2578646
-    assert ch.user_details['contributor_name'] == 'Tobsen Laufi'
-    assert ch.user_details['contributor_blocks'] == 0
-    assert ch.user_details['contributor_since'] == datetime(2015, 01, 15)
-    assert ch.user_details['contributor_traces'] == 0
 
-    assert ch.user_details['nodes_c'] == 0
-    assert ch.user_details['nodes_m'] == 0
-    assert ch.user_details['nodes_d'] == 975
+def test_custom_percentage():
+    """C/M/D = 481 620 80 / JOSM"""
+    ch = Analyse(45082154)
+    ch.full_analysis()
+    assert ch.is_suspect is False
+    assert len(ch.suspicion_reasons) == 0
 
-    assert ch.user_details['ways_c'] == 0
-    assert ch.user_details['ways_m'] == 0
-    assert ch.user_details['ways_d'] == 43
+    ch = Analyse(45082154, percentage=0.5)
+    ch.full_analysis()
+    assert ch.is_suspect
+    assert 'mass modification' in ch.suspicion_reasons
 
-    assert ch.user_details['relations_c'] == 0
-    assert ch.user_details['relations_m'] == 0
-    assert ch.user_details['relations_d'] == 1
 
-    assert ch.user_details['changesets_no'] == 1
-    assert ch.user_details['changesets_changes'] == 1019
-    assert ch.user_details['changesets_f_tstamp'] == datetime(2015, 05, 25, 16, 30, 43)
-    assert ch.user_details['changesets_l_tstamp'] == datetime(2015, 05, 25, 16, 30, 43)
-    assert ch.user_details['changesets_mapping_days'] == '2015=1'
+def test_custom_top_threshold():
+    """C/M/D = 1072 124 282 / made with iD"""
+    ch = Analyse(45862717)
+    ch.full_analysis()
+    assert ch.is_suspect
+    assert 'possible import' in ch.suspicion_reasons
+
+    ch = Analyse(45862717, top_threshold=1100)
+    ch.full_analysis()
+    assert ch.is_suspect is False
+    assert len(ch.suspicion_reasons) == 0
+
+
+def test_no_duplicated_reason():
+    """Changeset with word import in comment and source fields."""
+    ch = Analyse(45632780)
+    ch.full_analysis()
+    assert ch.is_suspect
+    assert ch.suspicion_reasons == ['suspect_word']
+
+
+def test_redacted_changeset():
+    """Redacted changesets have no metadata so those cases need to be threated
+    to avoid a ZeroDivisionError in the Analyse.count() method.
+    """
+    ch = Analyse(34495147)
+    ch.full_analysis()
+    assert ch.is_suspect is False
+
+
+def test_get_dict():
+    """Test if get_dict function return only the fields that osmcha-django needs
+    to save in the database.
+    """
+    # An iD changeset
+    ch = Analyse(46286980)
+    ch.full_analysis()
+    assert 'id' in ch.get_dict().keys()
+    assert 'user' in ch.get_dict().keys()
+    assert 'uid' in ch.get_dict().keys()
+    assert 'editor' in ch.get_dict().keys()
+    assert 'bbox' in ch.get_dict().keys()
+    assert 'date' in ch.get_dict().keys()
+    assert 'comment' in ch.get_dict().keys()
+    assert 'source' in ch.get_dict().keys()
+    assert 'imagery_used' in ch.get_dict().keys()
+    assert 'is_suspect' in ch.get_dict().keys()
+    assert 'powerfull_editor' in ch.get_dict().keys()
+    assert 'suspicion_reasons' in ch.get_dict().keys()
+    assert 'create' in ch.get_dict().keys()
+    assert 'modify' in ch.get_dict().keys()
+    assert 'delete' in ch.get_dict().keys()
+    assert len(ch.get_dict().keys()) == 15
+
+    # A JOSM changeset
+    ch = Analyse(46315321)
+    ch.full_analysis()
+    assert 'id' in ch.get_dict().keys()
+    assert 'user' in ch.get_dict().keys()
+    assert 'uid' in ch.get_dict().keys()
+    assert 'editor' in ch.get_dict().keys()
+    assert 'bbox' in ch.get_dict().keys()
+    assert 'date' in ch.get_dict().keys()
+    assert 'comment' in ch.get_dict().keys()
+    assert 'source' in ch.get_dict().keys()
+    assert 'imagery_used' in ch.get_dict().keys()
+    assert 'is_suspect' in ch.get_dict().keys()
+    assert 'powerfull_editor' in ch.get_dict().keys()
+    assert 'suspicion_reasons' in ch.get_dict().keys()
+    assert 'create' in ch.get_dict().keys()
+    assert 'modify' in ch.get_dict().keys()
+    assert 'delete' in ch.get_dict().keys()
+    assert len(ch.get_dict().keys()) == 15
 
 def test_prediction_from_gabbar():
     changeset = Analyse(46107636)
