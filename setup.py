@@ -18,6 +18,7 @@ setup(name='osmcha',
       url='https://github.com/willemarcel/osmcha',
       license='GPLv3+',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      package_data={'osmcha': ['models/autovandal.pkl']},
       include_package_data=True,
       zip_safe=False,
       install_requires=[
