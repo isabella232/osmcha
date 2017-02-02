@@ -16,6 +16,7 @@ import requests
 from homura import download
 from shapely.geometry import Polygon
 from sklearn.externals import joblib
+import os
 
 
 # Python 2 has 'failobj' instead of 'default'
@@ -223,7 +224,10 @@ class Analyse(object):
         reason = 'Flagged by ML classifier'
 
         def load_model():
-            return joblib.load('models/autovandal.pkl')
+            directory = os.path.dirname(os.path.realpath(__file__))
+            filename = 'models/autovandal.pkl'
+            model = os.path.join(directory, filename)
+            return joblib.load(model)
 
         def changeset_to_data(changeset):
             return [
