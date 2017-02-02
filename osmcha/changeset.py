@@ -296,8 +296,6 @@ class Analyse(object):
 
         def changeset_to_data(changeset):
             return [
-                len(changeset.editor),
-                len(changeset.source),
                 changeset.create,
                 changeset.modify,
                 changeset.delete
