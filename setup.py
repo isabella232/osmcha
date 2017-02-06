@@ -29,8 +29,10 @@ setup(name='osmcha',
           'python-dateutil',
           'numpy',
           'scipy',
-          'scikit-learn'
+          'scikit-learn',
+          'gabbar'
       ],
+      dependency_links=['git+ssh://git@github.com/mapbox/gabbar#egg=gabbar'],
       extras_require={
           'test': ['pytest'],
       },
