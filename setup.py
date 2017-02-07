@@ -39,9 +39,9 @@ setup(name='osmcha',
           'numpy',
           'scipy',
           'scikit-learn',
-          'gabbar'
+          'gabbar==0.2'
       ],
-      dependency_links=['git+ssh://git@github.com/mapbox/gabbar#egg=gabbar'],
+      dependency_links=['https://github.com/mapbox/gabbar/tarball/master#egg=gabbar-0.2'],
       extras_require={
           'test': ['pytest', 'responses'],
       },
