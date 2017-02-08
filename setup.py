@@ -18,7 +18,6 @@ setup(name='osmcha',
       url='https://github.com/willemarcel/osmcha',
       license='GPLv3+',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-      package_data={'osmcha': ['models/autovandal.pkl']},
       include_package_data=True,
       zip_safe=False,
       install_requires=[
@@ -27,12 +26,8 @@ setup(name='osmcha',
           'homura',
           'shapely',
           'python-dateutil',
-          'numpy',
-          'scipy',
-          'scikit-learn',
-          'gabbar==0.2'
+          'gabbar==0.2.4'
       ],
-      dependency_links=['https://github.com/mapbox/gabbar/tarball/master#egg=gabbar-0.2'],
       extras_require={
           'test': ['pytest'],
       },

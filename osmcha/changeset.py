@@ -1,8 +1,6 @@
 import requests
 from homura import download
 from shapely.geometry import Polygon
-from sklearn.externals import joblib
-import os
 
 from os.path import basename, join, isfile
 from datetime import datetime
@@ -12,6 +10,8 @@ import xml.etree.ElementTree as ET
 import json
 from shutil import rmtree
 import dateutil.parser
+
+import gabbar
 
 
 class InvalidChangesetError(Exception):
@@ -202,7 +202,7 @@ class Analyse(object):
         self.calc_user_score()
         self.calc_changeset_score()
         self.verify_words()
-        self.autovandal()
+        self.prediction_from_gabbar()
 
     def set_user_score(self, score, reason):
         self.user_score = self.user_score + score
@@ -288,31 +288,15 @@ class Analyse(object):
                 is_whitelisted = True
         return is_whitelisted
 
-    def autovandal(self):
+    def prediction_from_gabbar(self):
 
         reason = 'Flagged by ML classifier'
+        model = gabbar.load_model()
 
-        def load_model():
-            directory = os.path.dirname(os.path.realpath(__file__))
-            filename = 'models/autovandal.pkl'
-            model = os.path.join(directory, filename)
-            return joblib.load(model)
-
-        def changeset_to_data(changeset):
-            return [
-                changeset.create,
-                changeset.modify,
-                changeset.delete
-            ]
-
-        def predict(model, data):
-            prediction = model.predict(data)
-            return prediction[0]
-
-        model = load_model()
-        data = changeset_to_data(self)
-        prediction = predict(model, data)
-        print('autovandal prediction: {}'.format(prediction))
+        # Passing a dictionary converted from a Django object.
+        data = gabbar.changeset_to_data(self.__dict__)
+        prediction = gabbar.predict(model, data)
+        print('gabbar prediction: {}'.format(prediction))
 
         # -1 for problematic, +1 for not problematic
         if prediction == -1:
