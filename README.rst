@@ -18,7 +18,7 @@ Testing
 mkvirtualenv osmcha
 
 # Install required packages in locally editable (``-e``) mode.
-pip install --process-dependency-links -e .[test]
+pip install -e .
 
 # Run the tests.
 py.test
