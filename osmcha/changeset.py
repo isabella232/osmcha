@@ -221,7 +221,7 @@ class Analyse(object):
 
     def prediction_from_gabbar(self):
 
-        reason = 'Flagged by ML classifier'
+        reason = 'Flagged by gabbar'
         model = gabbar.load_model()
 
         # Passing a dictionary converted from a Django object.
