@@ -15,8 +15,6 @@ import yaml
 import requests
 from homura import download
 from shapely.geometry import Polygon
-from sklearn.externals import joblib
-import os
 
 
 # Python 2 has 'failobj' instead of 'default'
@@ -35,6 +33,8 @@ OSM_USERS_API = environ.get(
     'OSM_USERS_API',
     'https://osm-comments-api.mapbox.com/api/v1/users/name/{username}'
     )
+
+import gabbar
 
 
 class InvalidChangesetError(Exception):
@@ -221,6 +221,7 @@ class Analyse(object):
         self.count()
         self.verify_words()
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.changeset_by_new_mapper()
 
     def changeset_by_new_mapper(self):
@@ -255,33 +256,18 @@ class Analyse(object):
                 'changeset_by_new_mapper failed for: {}, {}'.format(self.id, str(e))
                 )
         self.autovandal()
+        self.prediction_from_gabbar()
 
 
-    def autovandal(self):
+    def prediction_from_gabbar(self):
 
         reason = 'Flagged by ML classifier'
+        model = gabbar.load_model()
 
-        def load_model():
-            directory = os.path.dirname(os.path.realpath(__file__))
-            filename = 'models/autovandal.pkl'
-            model = os.path.join(directory, filename)
-            return joblib.load(model)
-
-        def changeset_to_data(changeset):
-            return [
-                changeset.create,
-                changeset.modify,
-                changeset.delete
-            ]
-
-        def predict(model, data):
-            prediction = model.predict(data)
-            return prediction[0]
-
-        model = load_model()
-        data = changeset_to_data(self)
-        prediction = predict(model, data)
-        print('autovandal prediction: {}'.format(prediction))
+        # Passing a dictionary converted from a Django object.
+        data = gabbar.changeset_to_data(self.__dict__)
+        prediction = gabbar.predict(model, data)
+        print('gabbar prediction: {}'.format(prediction))
 
         # -1 for problematic, +1 for not problematic
         if prediction == -1:
