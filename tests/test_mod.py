@@ -347,5 +347,5 @@ def test_analyse_user_details():
 def test_prediction_from_gabbar():
     changeset = Analyse(31450443)
     changeset.full_analysis()
-    assert 'Flagged by ML classifier' in changeset.suspicion_reasons
+    assert 'Flagged by gabbar' in changeset.suspicion_reasons
     assert changeset.is_suspect
