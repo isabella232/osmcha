@@ -301,6 +301,7 @@ class Analyse(object):
         # -1 for problematic, +1 for not problematic
         if prediction == -1:
             self.suspicion_reasons.append(reason)
+            self.is_suspect = True
 
 
     def verify_words(self):
