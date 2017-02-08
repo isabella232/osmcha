@@ -509,7 +509,7 @@ def test_get_dict():
     assert 'delete' in ch.get_dict().keys()
     assert len(ch.get_dict().keys()) == 15
 
-def test_autovandal():
+def test_prediction_from_gabbar():
     changeset = Analyse(31450443)
     changeset.full_analysis()
     assert 'Flagged by ML classifier' in changeset.suspicion_reasons
