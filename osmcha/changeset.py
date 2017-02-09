@@ -11,6 +11,8 @@ import json
 from shutil import rmtree
 import dateutil.parser
 
+import gabbar
+
 
 class InvalidChangesetError(Exception):
     pass
@@ -200,6 +202,7 @@ class Analyse(object):
         self.calc_user_score()
         self.calc_changeset_score()
         self.verify_words()
+        self.prediction_from_gabbar()
 
     def set_user_score(self, score, reason):
         self.user_score = self.user_score + score
@@ -284,6 +287,21 @@ class Analyse(object):
             if w in editor_lower:
                 is_whitelisted = True
         return is_whitelisted
+
+    def prediction_from_gabbar(self):
+
+        reason = 'Flagged by gabbar'
+        model = gabbar.load_model()
+
+        # Passing a dictionary converted from a Django object.
+        data = gabbar.changeset_to_data(self.__dict__)
+        prediction = gabbar.predict(model, data)
+        print('gabbar prediction: {}'.format(prediction))
+
+        # -1 for problematic, +1 for not problematic
+        if prediction == -1:
+            self.suspicion_reasons.append(reason)
+            self.is_suspect = True
 
 
     def verify_words(self):

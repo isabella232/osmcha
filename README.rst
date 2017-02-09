@@ -10,6 +10,22 @@ OSM Changeset Analyser, a Python package to detect suspicious OSM changesets
 .. image:: https://coveralls.io/repos/willemarcel/osmcha/badge.svg
     :target: https://coveralls.io/r/willemarcel/osmcha
 
+Testing
+-------
+
+```sh
+# Setup a virtual environment to install required packages.
+mkvirtualenv osmcha
+
+# Install required packages in locally editable (``-e``) mode.
+pip install -e .
+
+# Run the tests.
+py.test
+```
+
+
+
 License
 =======
 
