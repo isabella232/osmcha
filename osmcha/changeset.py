@@ -202,7 +202,7 @@ class Analyse(object):
         self.calc_user_score()
         self.calc_changeset_score()
         self.verify_words()
-        self.prediction_from_gabbar()
+        # self.prediction_from_gabbar()
 
     def set_user_score(self, score, reason):
         self.user_score = self.user_score + score
