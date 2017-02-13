@@ -222,6 +222,7 @@ class Analyse(object):
         self.verify_words()
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.changeset_by_new_mapper()
 
     def changeset_by_new_mapper(self):
@@ -257,7 +258,6 @@ class Analyse(object):
                 )
         self.autovandal()
         self.prediction_from_gabbar()
-
 
     def prediction_from_gabbar(self):
 
