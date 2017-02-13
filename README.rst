@@ -1,5 +1,5 @@
+======
 osmcha
-=======
 
 OSM Changeset Analyser, ``osmcha``, is a Python package to detect suspicious OSM changesets.
 It was designed to be used with `osmcha-django <https://github.com/willemarcel/osmcha-django>`_,
@@ -143,6 +143,7 @@ To run the tests on `osmcha`:
 Changelog
 =========
 
+<<<<<<< HEAD
 Check `CHANGELOG <CHANGELOG.rst>`_ for the version history.
 
 Contributors
@@ -152,20 +153,22 @@ Contributors
 * Sanjay Banghar
 * Bhargav Kowshik
 
-=======
+Check `CHANGELOG.RST<CHANGELOG.RST>`_ for the version history.
+
 Testing
--------
+=======
 
-```sh
-# Setup a virtual environment to install required packages.
-mkvirtualenv osmcha
+.. code-block:: bash
 
-# Install required packages in locally editable (``-e``) mode.
-pip install -e .
+    # Setup a virtual environment to install required packages.
+    mkvirtualenv osmcha
 
-# Run the tests.
-py.test
-```
+    # Install required packages in locally editable (`-e`) mode.
+    pip install -e .
+
+    # Run the tests.
+    py.test
+
 
 License
 =======
