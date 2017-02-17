@@ -216,7 +216,7 @@ class Analyse(object):
         """Execute the count and verify_words methods."""
         self.count()
         self.verify_words()
-        # self.prediction_from_gabbar()
+        self.prediction_from_gabbar()
 
 
     def prediction_from_gabbar(self):
