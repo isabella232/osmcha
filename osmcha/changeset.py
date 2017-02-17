@@ -223,6 +223,7 @@ class Analyse(object):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.changeset_by_new_mapper()
 
     def changeset_by_new_mapper(self):
@@ -235,6 +236,9 @@ class Analyse(object):
             self.suspicion_reasons.append(reason)
             self.is_suspect = True
             return self
+=======
+        self.prediction_from_gabbar()
+>>>>>>> Uncomment predictions from gabbar
 
         try:
             # Convert username to ASCII and quote any special characters.
