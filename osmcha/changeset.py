@@ -298,8 +298,8 @@ class Analyse(object):
         prediction = gabbar.predict(model, data)
         print('gabbar prediction: {}'.format(prediction))
 
-        # -1 for problematic, +1 for not problematic
-        if prediction == -1:
+        # True for problematic, False for not problematic.
+        if prediction == True:
             self.suspicion_reasons.append(reason)
             self.is_suspect = True
 
