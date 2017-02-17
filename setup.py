@@ -35,7 +35,7 @@ setup(name='osmcha',
           'shapely',
           'python-dateutil',
           'PyYAML'
-          'gabbar==0.2.4'
+          'gabbar==0.3'
       ],
       extras_require={
           'test': ['pytest', 'responses'],
