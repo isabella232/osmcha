@@ -510,7 +510,7 @@ def test_get_dict():
     assert len(ch.get_dict().keys()) == 15
 
 def test_prediction_from_gabbar():
-    changeset = Analyse(31450443)
+    changeset = Analyse(46107636)
     changeset.full_analysis()
     assert 'Flagged by gabbar' in changeset.suspicion_reasons
     assert changeset.is_suspect
