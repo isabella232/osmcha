@@ -576,7 +576,7 @@ def test_changeset_by_mapper_who_does_not_exist():
     assert changeset.is_suspect
 
 def test_prediction_from_gabbar():
-    changeset = Analyse(31450443)
+    changeset = Analyse(46107636)
     changeset.full_analysis()
     assert 'Flagged by gabbar' in changeset.suspicion_reasons
     assert changeset.is_suspect
