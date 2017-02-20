@@ -26,7 +26,7 @@ setup(name='osmcha',
           'homura',
           'shapely',
           'python-dateutil',
-          'gabbar==0.2.4'
+          'gabbar==0.3'
       ],
       extras_require={
           'test': ['pytest'],

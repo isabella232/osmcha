@@ -345,7 +345,7 @@ def test_analyse_user_details():
     assert ch.user_details['changesets_mapping_days'] == '2015=1'
 
 def test_prediction_from_gabbar():
-    changeset = Analyse(31450443)
+    changeset = Analyse(46107636)
     changeset.full_analysis()
     assert 'Flagged by gabbar' in changeset.suspicion_reasons
     assert changeset.is_suspect

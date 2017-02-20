@@ -202,7 +202,7 @@ class Analyse(object):
         self.calc_user_score()
         self.calc_changeset_score()
         self.verify_words()
-        # self.prediction_from_gabbar()
+        self.prediction_from_gabbar()
 
     def set_user_score(self, score, reason):
         self.user_score = self.user_score + score
@@ -298,8 +298,8 @@ class Analyse(object):
         prediction = gabbar.predict(model, data)
         print('gabbar prediction: {}'.format(prediction))
 
-        # -1 for problematic, +1 for not problematic
-        if prediction == -1:
+        # True for problematic, False for not problematic.
+        if prediction == True:
             self.suspicion_reasons.append(reason)
             self.is_suspect = True
 
