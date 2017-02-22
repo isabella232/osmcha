@@ -13,6 +13,9 @@ It was designed to be used with `osmcha-django <https://github.com/willemarcel/o
 but also can be used standalone or in other projects.
 >>>>>>> add detection rules information
 
+.. image:: https://badge.fury.io/py/osmcha.svg
+    :target: http://badge.fury.io/py/osmcha
+
 .. image:: https://travis-ci.org/willemarcel/osmcha.svg
     :target: https://travis-ci.org/willemarcel/osmcha
 
@@ -131,6 +134,15 @@ or pass a list of words to the ``Analyse`` class, more information on the sectio
 ``source`` and ``imagery_used`` fields and another more general list to examine
 the comment field. We have also a list of excluded words to avoid false positives.
 
+
+Unknown iD instance
+-------------------
+
+Verify the changesets made in iD editor to check the host instance. The trusted
+iD instances are: `OSM.org<http://osm.org/>`_, `Strava<https://strava.github.io/iD/>`_
+and `ImproveOSM<http://improveosm.org>`_.
+
+
 Tests
 ======
 >>>>>>> add detection rules information
@@ -144,6 +156,10 @@ Tests
     # Run the tests.
     py.test
 
+Changelog
+=========
+
+Check `CHANGELOG.RST<CHANGELOG.RST>`_ for the version history.
 
 License
 =======
