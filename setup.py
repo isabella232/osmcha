@@ -34,7 +34,7 @@ setup(name='osmcha',
           'homura',
           'shapely',
           'python-dateutil',
-          'PyYAML'
+          'PyYAML',
           'gabbar==0.3'
       ],
       extras_require={
