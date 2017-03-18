@@ -6,6 +6,7 @@ import re
 from os import environ
 from datetime import datetime
 from os.path import basename, join, isfile, dirname, abspath
+import urllib
 from shutil import rmtree
 from tempfile import mkdtemp
 import xml.etree.ElementTree as ET
@@ -217,6 +218,7 @@ class Analyse(object):
         self.count()
         self.verify_words()
         self.prediction_from_gabbar()
+        self.changeset_by_new_mapper()
 
 
     def prediction_from_gabbar(self):
@@ -233,6 +235,20 @@ class Analyse(object):
         if prediction == True:
             self.suspicion_reasons.append(reason)
             self.is_suspect = True
+
+    def changeset_by_new_mapper(self):
+        reason = 'Hello, welcome to OSM!'
+
+        # Convert username to ASCII and quote any special characters.
+        try:
+            url = 'https://osm-comments-api.mapbox.com/api/v1/users/name/{}'.format(urllib.quote(self.user))
+            user_details = json.loads(requests.get(url).content)
+        except Exception as e:
+            print('changeset_by_new_mapper failed for: {}, {}'.format(self.id, str(e)))
+        else:
+            if user_details['changeset_count'] <= 5:
+                self.suspicion_reasons.append(reason)
+                self.is_suspect = True
 
     def verify_words(self):
         """Verify the fields source, imagery_used and comment of the changeset
