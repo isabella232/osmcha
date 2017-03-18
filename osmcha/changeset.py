@@ -239,8 +239,8 @@ class Analyse(object):
     def changeset_by_new_mapper(self):
         reason = 'Hello, welcome to OSM!'
 
-        # Convert username to ASCII and quote any special characters.
         try:
+            # Convert username to ASCII and quote any special characters.
             url = 'https://osm-comments-api.mapbox.com/api/v1/users/name/{}'.format(urllib.quote(self.user))
             user_details = json.loads(requests.get(url).content)
         except Exception as e:
