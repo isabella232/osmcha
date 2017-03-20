@@ -30,6 +30,7 @@ except TypeError:
         failobj=join(dirname(abspath(__file__)), 'suspect_words.yaml')
         )
 WORDS = yaml.load(open(SUSPECT_WORDS_FILE, 'r').read())
+OSM_USERS_API = environ.get('OSM_USERS_API', 'https://osm-comments-api.mapbox.com/api/v1/users/name/{username}')
 
 import gabbar
 
@@ -237,11 +238,12 @@ class Analyse(object):
             self.is_suspect = True
 
     def changeset_by_new_mapper(self):
-        reason = 'Hello, welcome to OSM!'
+        reason = 'New mapper'
 
         try:
             # Convert username to ASCII and quote any special characters.
-            url = 'https://osm-comments-api.mapbox.com/api/v1/users/name/{}'.format(urllib.quote(self.user))
+            url = OSM_USERS_API.format(username=urllib.quote(self.user))
+            print(url)
             user_details = json.loads(requests.get(url).content)
         except Exception as e:
             print('changeset_by_new_mapper failed for: {}, {}'.format(self.id, str(e)))
