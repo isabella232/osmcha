@@ -3,6 +3,7 @@ from __future__ import division, unicode_literals
 import gzip
 import json
 import re
+import urllib
 from os import environ
 from datetime import datetime
 from os.path import basename, join, isfile, dirname, abspath
@@ -29,6 +30,7 @@ except TypeError:
         failobj=join(dirname(abspath(__file__)), 'suspect_words.yaml')
         )
 WORDS = yaml.load(open(SUSPECT_WORDS_FILE, 'r').read())
+OSM_USERS_API = environ.get('OSM_USERS_API', 'https://osm-comments-api.mapbox.com/api/v1/users/name/{username}')
 
 import gabbar
 
@@ -217,6 +219,7 @@ class Analyse(object):
         self.count()
         self.verify_words()
         self.prediction_from_gabbar()
+        self.changeset_by_new_mapper()
 
 
     def prediction_from_gabbar(self):
@@ -233,6 +236,21 @@ class Analyse(object):
         if prediction == True:
             self.suspicion_reasons.append(reason)
             self.is_suspect = True
+
+    def changeset_by_new_mapper(self):
+        reason = 'New mapper'
+
+        try:
+            # Convert username to ASCII and quote any special characters.
+            url = OSM_USERS_API.format(username=urllib.quote(self.user))
+            print(url)
+            user_details = json.loads(requests.get(url).content)
+        except Exception as e:
+            print('changeset_by_new_mapper failed for: {}, {}'.format(self.id, str(e)))
+        else:
+            if user_details['changeset_count'] <= 5:
+                self.suspicion_reasons.append(reason)
+                self.is_suspect = True
 
     def verify_words(self):
         """Verify the fields source, imagery_used and comment of the changeset

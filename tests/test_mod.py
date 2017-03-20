@@ -514,3 +514,21 @@ def test_prediction_from_gabbar():
     changeset.full_analysis()
     assert 'Flagged by gabbar' in changeset.suspicion_reasons
     assert changeset.is_suspect
+
+def test_changeset_by_new_mapper():
+    changeset = Analyse(46756461)
+    changeset.full_analysis()
+    assert 'New mapper' in changeset.suspicion_reasons
+    assert changeset.is_suspect
+
+def test_changeset_by_old_mapper_with_unicode_username():
+    changeset = Analyse(46790192)
+    changeset.full_analysis()
+    assert 'New mapper' not in changeset.suspicion_reasons
+    assert not changeset.is_suspect
+
+def test_changeset_by_old_mapper_with_special_character_username():
+    changeset = Analyse(46141825)
+    changeset.full_analysis()
+    assert 'New mapper' not in changeset.suspicion_reasons
+    assert not changeset.is_suspect
