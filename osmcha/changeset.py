@@ -29,6 +29,10 @@ except TypeError:
         failobj=join(dirname(abspath(__file__)), 'suspect_words.yaml')
         )
 WORDS = yaml.load(open(SUSPECT_WORDS_FILE, 'r').read())
+OSM_USERS_API = environ.get(
+    'OSM_USERS_API',
+    'https://osm-comments-api.mapbox.com/api/v1/users/name/{username}'
+    )
 
 import gabbar
 
@@ -198,7 +202,7 @@ class Analyse(object):
         self.id = int(changeset.get('id'))
         self.user = changeset.get('user')
         self.uid = changeset.get('uid')
-        self.editor = changeset.get('created_by')
+        self.editor = changeset.get('created_by', None)
         self.host = changeset.get('host', 'Not reported')
         self.bbox = changeset.get('bbox').wkt
         self.comment = changeset.get('comment', 'Not reported')
@@ -217,7 +221,7 @@ class Analyse(object):
         self.count()
         self.verify_words()
         self.prediction_from_gabbar()
-
+        self.changeset_by_new_mapper()
 
     def prediction_from_gabbar(self):
 
@@ -233,6 +237,25 @@ class Analyse(object):
         if prediction == True:
             self.suspicion_reasons.append(reason)
             self.is_suspect = True
+
+    def changeset_by_new_mapper(self):
+        reason = 'New mapper'
+
+        try:
+            # Convert username to ASCII and quote any special characters.
+            url = OSM_USERS_API.format(
+                username=requests.compat.quote(self.user)
+                )
+            # .decode is necessary to avoid failing in python 3.4 and 3.5
+            user_details = json.loads(requests.get(url).content.decode('utf-8'))
+        except Exception as e:
+            print(
+                'changeset_by_new_mapper failed for: {}, {}'.format(self.id, str(e))
+                )
+        else:
+            if user_details['changeset_count'] <= 5:
+                self.suspicion_reasons.append(reason)
+                self.is_suspect = True
 
     def verify_words(self):
         """Verify the fields source, imagery_used and comment of the changeset
@@ -263,21 +286,26 @@ class Analyse(object):
     def verify_editor(self):
         """Verify if the software used in the changeset is a powerfull_editor.
         """
-        for editor in ['josm', 'level0', 'merkaartor', 'qgis', 'arcgis']:
-            if editor in self.editor.lower():
-                self.powerfull_editor = True
-                break
+        if self.editor is not None:
+            for editor in ['josm', 'level0', 'merkaartor', 'qgis', 'arcgis']:
+                if editor in self.editor.lower():
+                    self.powerfull_editor = True
+                    break
 
-        if 'iD' in self.editor:
-            trusted_hosts = [
-                'http://www.openstreetmap.org/id',
-                'https://www.openstreetmap.org/id',
-                'http://improveosm.org/',
-                'https://strava.github.io/iD/'
-                ]
-            if self.host not in trusted_hosts:
-                self.is_suspect = True
-                self.suspicion_reasons.append('Unknown iD instance')
+            if 'iD' in self.editor:
+                trusted_hosts = [
+                    'http://www.openstreetmap.org/id',
+                    'https://www.openstreetmap.org/id',
+                    'http://improveosm.org/',
+                    'https://strava.github.io/iD/'
+                    ]
+                if self.host not in trusted_hosts:
+                    self.is_suspect = True
+                    self.suspicion_reasons.append('Unknown iD instance')
+        else:
+            self.is_suspect = True
+            self.powerfull_editor = True
+            self.suspicion_reasons.append('Software editor was not declared')
 
     def count(self):
         """Count the number of elements created, modified and deleted by the
