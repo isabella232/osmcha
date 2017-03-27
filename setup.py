@@ -38,7 +38,7 @@ setup(name='osmcha',
           'gabbar==0.3'
       ],
       extras_require={
-          'test': ['pytest'],
+          'test': ['pytest', 'responses'],
       },
       entry_points="""
       [console_scripts]
