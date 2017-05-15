@@ -512,8 +512,6 @@ def test_get_dict():
     assert 'delete' in ch.get_dict().keys()
     assert len(ch.get_dict().keys()) == 15
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 def test_changeset_without_tags():
     ch = Analyse(46755934)
