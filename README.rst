@@ -1,3 +1,5 @@
+DEPRECATED. SHOULD DELETE.
+
 ======
 osmcha
 
